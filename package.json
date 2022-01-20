@@ -1,0 +1,23 @@
+{
+  "name": "twitter-auto-thread",
+  "version": "1.0.0",
+  "description": "Convert long text into a thread of tweets intelligently",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BambooSoftwareLLC/twitter-auto-thread.git"
+  },
+  "keywords": [
+    "twitter",
+    "thread"
+  ],
+  "author": "Michael Harris",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BambooSoftwareLLC/twitter-auto-thread/issues"
+  },
+  "homepage": "https://github.com/BambooSoftwareLLC/twitter-auto-thread#readme"
+}
