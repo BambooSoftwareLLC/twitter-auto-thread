@@ -29,5 +29,8 @@
     "mocha": "^9.1.4",
     "ts-mocha": "^9.0.2",
     "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "twitter-api-v2": "^1.9.1"
   }
 }
