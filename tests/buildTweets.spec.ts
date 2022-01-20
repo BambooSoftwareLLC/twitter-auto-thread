@@ -16,4 +16,25 @@ describe("buildTweets", () => {
     const tweets = buildTweets(text);
     expect(tweets.length).to.equal(1);
   });
+
+  it("should return more than one tweet for long paragraphs", () => {
+    const paragraph =
+      "Jonathan then spoke well of David to his father Saul, saying to him:\n" +
+      '"Let not your majesty sin against his servant David,\n' +
+      "for he has committed no offense against you,\n" +
+      "but has helped you very much by his deeds.\n" +
+      "When he took his life in his hands and slew the Philistine,\n" +
+      "and the LORD brought about a great victory\n" +
+      "for all Israel through him,\n" +
+      "you were glad to see it.\n" +
+      "Why, then, should you become guilty of shedding innocent blood\n" +
+      'by killing David without cause?"\n' +
+      "Saul heeded Jonathan's plea and swore,\n" +
+      '"As the LORD lives, he shall not be killed."\n' +
+      "So Jonathan summoned David and repeated the whole conversation to him.\n" +
+      "Jonathan then brought David to Saul, and David served him as before.";
+    const tweets = buildTweets(paragraph);
+
+    expect(tweets.length).to.be.greaterThanOrEqual(2);
+  });
 });
