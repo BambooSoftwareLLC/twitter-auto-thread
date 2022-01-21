@@ -1,11 +1,8 @@
 name: publish
-on:
-  push:
-    branches:
-      - 'release/**'
+on: [push]
 
 jobs:
-  publish:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,6 +15,9 @@ jobs:
           
       - run: npm ci
       - run: npm run build
+      - run: npm test
+
       - run: npm publish
+        if: startsWith(github.ref, 'refs/heads/release/')
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
