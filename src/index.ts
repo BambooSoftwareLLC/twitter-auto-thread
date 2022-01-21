@@ -16,7 +16,7 @@ import Tokenizer from "sentence-tokenizer";
 // All that remains for him is the kingship.”\n
 // And from that day on, Saul was jealous of David.\n
 
-const maxLength = 250;
+const maxLength = 280;
 
 export function buildTweets(paragraph: string): SendTweetV2Params[] {
   // first, split into quotes and non-quotes, maintaining order
@@ -31,26 +31,16 @@ export function buildTweets(paragraph: string): SendTweetV2Params[] {
   // loop by character
   // if a quote is found, end the current chunk (if exists) and start a "quote group"
   const chunks: Chunk[] = [{ text: "", type: "normal" }];
-  let skipSpace = false;
   for (const c of paragraph) {
     let current = chunks[chunks.length - 1];
-    
+
     if (c === '"' && current.type === "quote") {
       current.text += c;
-      chunks.push(current);
-      current = { text: "", type: "normal" };
-      skipSpace = true;
+      chunks.push({ text: "", type: "normal" });
     } else if (c === '"' && current.text.length > 0) {
-      current.text = current.text.trim();
-      chunks.push(current);
-      current = { text: c, type: "quote" };
+      chunks.push({ text: c, type: "quote" });
     } else if (c === '"' && current.text.length === 0) {
       current = { text: c, type: "quote" };
-    } else if (c === '"' && current.text.length === 0) {
-      current = { text: c, type: "quote" };
-    } else if (c === " " && skipSpace) {
-      skipSpace = false;
-      continue;
     } else {
       current.text += c;
     }
@@ -92,13 +82,19 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
     }
   }
 
-  return tweets;
+  return tweets.map((t) => ({ text: t.text?.trim() }));
 }
 
 function splitChunk(chunk: Chunk): Chunk[] {
   // try to split into sentences
   const tokenizer = getTokenizer();
-  tokenizer.setEntry(chunk.text);
+
+  // need space before newline or sentences are incorrect
+  let text = chunk.text.replace(".\n", ". \n");
+  text = text.replace("!\n", "! \n");
+  text = text.replace("?\n", "? \n");
+
+  tokenizer.setEntry(text);
   const sentences = tokenizer.getSentences();
 
   if (sentences.every((s) => s.length <= maxLength)) {
