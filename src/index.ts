@@ -30,10 +30,11 @@ export function buildTweets(paragraph: string): SendTweetV2Params[] {
 
   // loop by character
   // if a quote is found, end the current chunk (if exists) and start a "quote group"
-  const chunks: Chunk[] = [];
-  let current: Chunk = { text: "", type: "normal" };
+  const chunks: Chunk[] = [{ text: "", type: "normal" }];
   let skipSpace = false;
   for (const c of paragraph) {
+    let current = chunks[chunks.length - 1];
+    
     if (c === '"' && current.type === "quote") {
       current.text += c;
       chunks.push(current);
@@ -42,6 +43,8 @@ export function buildTweets(paragraph: string): SendTweetV2Params[] {
     } else if (c === '"' && current.text.length > 0) {
       current.text = current.text.trim();
       chunks.push(current);
+      current = { text: c, type: "quote" };
+    } else if (c === '"' && current.text.length === 0) {
       current = { text: c, type: "quote" };
     } else if (c === '"' && current.text.length === 0) {
       current = { text: c, type: "quote" };
@@ -94,7 +97,7 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
 
 function splitChunk(chunk: Chunk): Chunk[] {
   // try to split into sentences
-  const tokenizer = new Tokenizer("gibberish", "gibberish");
+  const tokenizer = getTokenizer();
   tokenizer.setEntry(chunk.text);
   const sentences = tokenizer.getSentences();
 
@@ -131,7 +134,7 @@ function splitChunk(chunk: Chunk): Chunk[] {
 
 function splitIntoPhrases(sentence: string): string[] {
   // get individual tokens
-  const tokenizer = new Tokenizer("gibberish", "gibberish");
+  const tokenizer = getTokenizer();
   tokenizer.setEntry(sentence);
   tokenizer.getSentences();
   const tokens = tokenizer.getTokens(0);
@@ -171,7 +174,41 @@ function splitIntoPhrases(sentence: string): string[] {
 }
 
 function splitIntoScraps(phrase: string): string[] {
-  throw new Error("Function not implemented.");
+  // keep dividing it by roughly two until it fits
+
+  // get all tokens
+  var tokenizer = getTokenizer();
+  tokenizer.setEntry(phrase);
+  tokenizer.getSentences();
+  const tokens = tokenizer.getTokens(0);
+
+  // split down the middle by count
+  const splitIndex = Math.ceil(tokens.length / 2);
+  const newLeft = tokens.slice(0, splitIndex).join(" ");
+  const newRight = tokens
+    .slice(splitIndex, tokens.length - splitIndex)
+    .join(" ");
+
+  // check that both sub-phrases are valid
+  // if any are invalid, split it again recursively
+  const scraps: string[] = [];
+  if (newLeft.length <= maxLength) {
+    scraps.push(newLeft);
+  } else {
+    scraps.push(...splitIntoScraps(newLeft));
+  }
+
+  if (newRight.length <= maxLength) {
+    scraps.push(newRight);
+  } else {
+    scraps.push(...splitIntoScraps(newRight));
+  }
+
+  return scraps;
+}
+
+function getTokenizer(): Tokenizer {
+  return new Tokenizer("gibberish", "gibberish");
 }
 
 interface Chunk {
