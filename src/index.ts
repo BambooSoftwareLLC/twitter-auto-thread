@@ -1,8 +1,4 @@
-import {
-  SendTweetV2Params,
-  TweetV2PostTweetResult,
-  TwitterApiReadWrite,
-} from "twitter-api-v2";
+import { SendTweetV2Params, TweetV2PostTweetResult, TwitterApiReadWrite } from "twitter-api-v2";
 import Tokenizer from "sentence-tokenizer";
 
 export class TwitterAutoThreadClient {
@@ -13,9 +9,13 @@ export class TwitterAutoThreadClient {
     await this.tweetThread(tweets);
   }
 
-  public async tweetThread(tweets: SendTweetV2Params[]): Promise<void> {
+  public async tweetThread(tweets: SendTweetV2Params[], beforeEach?: () => void): Promise<void> {
     let lastTweet: TweetV2PostTweetResult | null = null;
     for (const tweet of tweets) {
+      if (!!beforeEach) {
+        beforeEach();
+      }
+
       if (!!lastTweet) {
         tweet.reply = { in_reply_to_tweet_id: lastTweet.data.id };
       }
@@ -68,10 +68,7 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
     }
 
     // if chunk makes existing tweet too large, try to create new tweet
-    else if (
-      (tweet.text?.length ?? 0) + chunk.text.length > maxLength &&
-      chunk.text.length <= maxLength
-    ) {
+    else if ((tweet.text?.length ?? 0) + chunk.text.length > maxLength && chunk.text.length <= maxLength) {
       tweets.push({ text: chunk.text });
     }
 
@@ -137,12 +134,7 @@ function splitIntoPhrases(sentence: string): string[] {
 
   // build atomic phrases (stopping on ',', ';', ':')
   const endsWithPunctuation = (s: string) =>
-    s.endsWith(",") ||
-    s.endsWith(";") ||
-    s.endsWith(":") ||
-    s.endsWith(".") ||
-    s.endsWith("!") ||
-    s.endsWith("?");
+    s.endsWith(",") || s.endsWith(";") || s.endsWith(":") || s.endsWith(".") || s.endsWith("!") || s.endsWith("?");
 
   const phrases: string[] = [""];
   for (const token of tokens) {
@@ -181,9 +173,7 @@ function splitIntoScraps(phrase: string): string[] {
   // split down the middle by count
   const splitIndex = Math.ceil(tokens.length / 2);
   const newLeft = tokens.slice(0, splitIndex).join(" ");
-  const newRight = tokens
-    .slice(splitIndex, tokens.length - splitIndex)
-    .join(" ");
+  const newRight = tokens.slice(splitIndex, tokens.length - splitIndex).join(" ");
 
   // check that both sub-phrases are valid
   // if any are invalid, split it again recursively
