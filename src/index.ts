@@ -9,11 +9,11 @@ export class TwitterAutoThreadClient {
     await this.tweetThread(tweets);
   }
 
-  public async tweetThread(tweets: SendTweetV2Params[], beforeEach?: () => void): Promise<void> {
+  public async tweetThread(tweets: SendTweetV2Params[], beforeEach?: (tweet: SendTweetV2Params) => void): Promise<void> {
     let lastTweet: TweetV2PostTweetResult | null = null;
     for (const tweet of tweets) {
       if (!!beforeEach) {
-        beforeEach();
+        beforeEach(tweet);
       }
 
       if (!!lastTweet) {
