@@ -64,12 +64,12 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
 
     // if chunk is good size, add to tweet
     if ((tweet.text?.length ?? 0) + chunk.text.length <= maxLength) {
-      tweet.text += chunk.text;
+      tweet.text += "\n" + chunk.text.trim();
     }
 
     // if chunk makes existing tweet too large, try to create new tweet
     else if ((tweet.text?.length ?? 0) + chunk.text.length > maxLength && chunk.text.length <= maxLength) {
-      tweets.push({ text: chunk.text });
+      tweets.push({ text: chunk.text.trim() });
     }
 
     // if chunk is too large by itself, try to split it
@@ -87,9 +87,9 @@ function splitChunk(chunk: Chunk): Chunk[] {
   const tokenizer = getTokenizer();
 
   // need space before newline or sentences are incorrect
-  let text = chunk.text.replace(".\n", ". \n");
-  text = text.replace("!\n", "! \n");
-  text = text.replace("?\n", "? \n");
+  let text = chunk.text.replace(/\.\n/g, ". \n");
+  text = text.replace(/\!\n/g, "! \n");
+  text = text.replace(/\?\n/g, "? \n");
 
   tokenizer.setEntry(text);
   const sentences = tokenizer.getSentences();

@@ -73,9 +73,7 @@ describe("buildTweets", () => {
 
     expect(tweets.length).to.equal(4);
 
-    expect(tweets[0].text).to.equal(
-      "Jonathan then spoke well of David to his father Saul, saying to him:"
-    );
+    expect(tweets[0].text).to.equal("Jonathan then spoke well of David to his father Saul, saying to him:");
     expect(tweets[1].text).to.equal(
       '"Let not your majesty sin against his servant David,\n' +
         "for he has committed no offense against you,\n" +
@@ -95,5 +93,29 @@ describe("buildTweets", () => {
         "So Jonathan summoned David and repeated the whole conversation to him.\n" +
         "Jonathan then brought David to Saul, and David served him as before."
     );
+  });
+
+  it("should work for 2-2-2022", () => {
+    const text = `Thus says the Lord GOD:
+Lo, I am sending my messenger
+to prepare the way before me;
+And suddenly there will come to the temple
+the Lordwhom you seek,
+And the messenger of the covenant whom you desire.
+Yes, he is coming, says the Lordof hosts.
+But who will endure the day of his coming?
+And who can stand when he appears?
+For he is like the refiner's fire,
+or like the fuller's lye.
+He will sit refining and purifying silver,
+and he will purify the sons of Levi,
+Refining them like gold or like silver
+that they may offer due sacrifice to the Lord.
+Then the sacrifice of Judah and Jerusalem
+will please the Lord,
+as in the days of old, as in years gone by.`;
+
+    const tweets = buildTweets(text);
+    expect(tweets.length).to.equal(4);
   });
 });
