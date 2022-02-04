@@ -130,35 +130,41 @@ function splitIntoPhrases(sentence: string): string[] {
   const tokenizer = getTokenizer();
   tokenizer.setEntry(sentence);
   tokenizer.getSentences();
-  const tokens = tokenizer.getTokens(0);
+  const tokens = tokenizer.getTokens(0).flatMap((t) => t.split(/(?<=\r?\n)/));
 
   // build atomic phrases (stopping on ',', ';', ':')
-  const endsWithPunctuation = (s: string) =>
-    s.endsWith(",") || s.endsWith(";") || s.endsWith(":") || s.endsWith(".") || s.endsWith("!") || s.endsWith("?");
+  const endsWith = [",", ";", ":", ".", "!", "?"].flatMap((t) => [t, `${t}\n`]);
+  const endsWithPunctuation = (s: string) => endsWith.some((ew) => s.endsWith(ew));
 
-  const phrases: string[] = [""];
+  const phrases: { text: string }[] = [{ text: "" }];
   for (const token of tokens) {
     let phrase = phrases[phrases.length - 1];
 
-    phrase += ` ${token}`;
+    phrase.text += ` ${token}`;
     if (endsWithPunctuation(token)) {
-      phrases.push("");
+      phrases.push({ text: "" });
     }
   }
 
   // compose atomic phrases into largest possible phrases
-  const fullPhrases: string[] = [""];
+  const fullPhrases: { text: string }[] = [{ text: "" }];
   for (const phrase of phrases) {
     let fullPhrase = fullPhrases[fullPhrases.length - 1];
 
-    if (fullPhrase.length + phrase.length <= maxLength) {
-      fullPhrase += phrase;
+    if (fullPhrase.text.length + phrase.text.length <= maxLength) {
+      fullPhrase.text += phrase.text;
     } else {
-      fullPhrases.push(phrase);
+      fullPhrases.push({ ...phrase });
     }
   }
 
-  return fullPhrases.filter((p) => p.length > 0);
+  // trim leading spaces from each line
+  const trimmedPhrases = fullPhrases
+    .filter((p) => p.text.length > 0)
+    .map((p) => p.text)
+    .map((p) => p.replace(/\n /g, "\n"));
+
+  return trimmedPhrases;
 }
 
 function splitIntoScraps(phrase: string): string[] {

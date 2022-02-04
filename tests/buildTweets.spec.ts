@@ -118,4 +118,61 @@ as in the days of old, as in years gone by.`;
     const tweets = buildTweets(text);
     expect(tweets.length).to.equal(4);
   });
+
+  it("should work for 2-3-2022", () => {
+    const text = `When the time of David's death drew near,
+he gave these instructions to his son Solomon:
+\"I am going the way of all flesh.
+Take courage and be a man.
+Keep the mandate of the Lord, your God, following his ways
+and observing his statutes, commands, ordinances, and decrees
+as they are written in the law of Moses,
+that you may succeed in whatever you do,
+wherever you turn, and the Lord may fulfill
+the promise he made on my behalf when he said,
+'If your sons so conduct themselves
+that they remain faithful to me with their whole heart
+and with their whole soul,
+you shall always have someone of your line
+on the throne of Israel.'\"
+
+David rested with his ancestors and was buried in the City of David.
+The length of David's reign over Israel was forty years:
+he reigned seven years in Hebron
+and thirty-three years in Jerusalem.
+
+Solomon was seated on the throne of his father David,
+with his sovereignty firmly established.`;
+
+    const tweets = buildTweets(text);
+    expect(tweets.length).to.equal(6);
+
+    expect(tweets[0].text).to.equal(`When the time of David's death drew near,
+he gave these instructions to his son Solomon:`);
+
+    expect(tweets[1].text).to.equal(`\"I am going the way of all flesh.
+Take courage and be a man.`);
+
+    expect(tweets[2].text).to.equal(`Keep the mandate of the Lord, your God, following his ways
+and observing his statutes, commands, ordinances, and decrees
+as they are written in the law of Moses,
+that you may succeed in whatever you do,
+wherever you turn,`);
+
+    expect(tweets[3].text).to.equal(`and the Lord may fulfill
+the promise he made on my behalf when he said,
+'If your sons so conduct themselves
+that they remain faithful to me with their whole heart
+and with their whole soul,
+you shall always have someone of your line
+on the throne of Israel.'\"`);
+
+    expect(tweets[4].text).to.equal(`David rested with his ancestors and was buried in the City of David.
+The length of David's reign over Israel was forty years:
+he reigned seven years in Hebron
+and thirty-three years in Jerusalem.`);
+
+    expect(tweets[5].text).to.equal(`Solomon was seated on the throne of his father David,
+with his sovereignty firmly established.`);
+  });
 });
