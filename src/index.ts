@@ -31,10 +31,15 @@ export function buildTweets(paragraph: string): SendTweetV2Params[] {
   // loop by character
   // if a quote is found, end the current chunk (if exists) and start a "quote group"
   const chunks: Chunk[] = [{ text: "", type: "normal" }];
-  for (const c of paragraph) {
+
+  for (let i = 0; i < paragraph.length; i++) {
+    const c = paragraph[i];
+    const c2 = i < paragraph.length - 1 ? paragraph[i + 1] : c;
     let current = chunks[chunks.length - 1];
 
-    if (c === '"' && current.type === "quote") {
+    // check if the quote ends
+    const nextIsInnerQuote = !!c2.match(/[a-zA-Z]/);
+    if (c === '"' && current.type === "quote" && !nextIsInnerQuote) {
       current.text += c;
       chunks.push({ text: "", type: "normal" });
     } else if (c === '"' && current.text.length > 0) {
@@ -54,7 +59,7 @@ export function buildTweets(paragraph: string): SendTweetV2Params[] {
   // if a split-sentence token is too long, try to split it near the middle of the token
   const tweets = getTweetsFromChunks(chunks);
 
-  return tweets;
+  return tweets.filter((t) => !!t.text && t.text.length > 0);
 }
 
 function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
@@ -64,7 +69,9 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
 
     // if chunk is good size, add to tweet
     if ((tweet.text?.length ?? 0) + chunk.text.length <= maxLength) {
-      tweet.text += "\n" + chunk.text.trim();
+      // don't put newline in front of "R."
+      tweet.text += tweet.text?.endsWith("R.") ? " " : "\n";
+      tweet.text += chunk.text.trim();
     }
 
     // if chunk makes existing tweet too large, try to create new tweet
@@ -79,7 +86,11 @@ function getTweetsFromChunks(chunks: Chunk[]): SendTweetV2Params[] {
     }
   }
 
-  return tweets.map((t) => ({ text: t.text?.trim() }));
+  return tweets
+    .map((t) => ({ text: t.text?.trim() }))
+    .map((t) => ({ text: t.text?.replace(/\n'\n/g, "'\n") }))
+    .map((t) => ({ text: t.text?.replace(/\n\"\n/g, '"\n') }))
+    .map((t) => ({ text: t.text?.replace(/\n\"$/gm, '"') }));
 }
 
 function splitChunk(chunk: Chunk): Chunk[] {
@@ -179,7 +190,7 @@ function splitIntoScraps(phrase: string): string[] {
   // split down the middle by count
   const splitIndex = Math.ceil(tokens.length / 2);
   const newLeft = tokens.slice(0, splitIndex).join(" ");
-  const newRight = tokens.slice(splitIndex, tokens.length - splitIndex).join(" ");
+  const newRight = tokens.slice(splitIndex, tokens.length).join(" ");
 
   // check that both sub-phrases are valid
   // if any are invalid, split it again recursively
