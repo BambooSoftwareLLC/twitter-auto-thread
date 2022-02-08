@@ -25,7 +25,7 @@ export class TwitterAutoThreadClient {
   }
 }
 
-const maxLength = 280;
+const maxLength = 270;
 
 export function buildTweets(paragraph: string): SendTweetV2Params[] {
   // loop by character
