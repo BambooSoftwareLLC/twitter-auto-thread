@@ -120,7 +120,7 @@ will please the Lord,
 as in the days of old, as in years gone by.`;
 
     const tweets = buildTweets(text);
-    expect(tweets.length).to.equal(3);
+    expect(tweets.length).to.equal(4);
   });
 
   it("should work for 2-3-2022", () => {
@@ -225,11 +225,11 @@ utter before you this day.`);
 
     expect(tweets[4].text).to.equal(`May your eyes watch night and day over this temple,
 the place where you have decreed you shall be honored;
-may you heed the prayer which I, your servant, offer in this place.
-Listen to the petitions of your servant and of your people Israel
-which they offer in this place.`);
+may you heed the prayer which I, your servant, offer in this place.`);
 
-    expect(tweets[5].text).to.equal(`Listen from your heavenly dwelling and grant pardon."`);
+    expect(tweets[5].text).to.equal(`Listen to the petitions of your servant and of your people Israel
+which they offer in this place.
+Listen from your heavenly dwelling and grant pardon."`);
   });
 
   it("should work for 2-8-2022 - Responsorial Psalm", () => {
@@ -277,13 +277,13 @@ continually they praise you.`);
 
     expect(tweets[2].text).to.equal(`O God, behold our shield,
 and look upon the face of your anointed.
-R. How lovely is your dwelling place, Lord, mighty God!
-I had rather one day in your courts
+R. How lovely is your dwelling place, Lord, mighty God!`);
+
+    expect(tweets[3].text).to.equal(`I had rather one day in your courts
 than a thousand elsewhere;
 I had rather lie at the threshold of the house of my God
-than dwell in the tents of the wicked.`);
-
-    expect(tweets[3].text).to.equal(`R. How lovely is your dwelling place, Lord, mighty God!`);
+than dwell in the tents of the wicked.
+R. How lovely is your dwelling place, Lord, mighty God!`);
   });
 
   it("should work for 2-8-2022 - Gospel", () => {
@@ -327,7 +327,7 @@ in favor of your tradition that you have handed on.
 And you do many such things."`;
 
     const tweets = buildTweets(text);
-    expect(tweets.length).to.equal(7);
+    expect(tweets.length).to.equal(8);
 
     expect(tweets[0].text).to.equal(`When the Pharisees with some scribes who had come from Jerusalem
 gathered around Jesus,
@@ -342,24 +342,25 @@ they do not eat without purifying themselves.`);
 
     expect(tweets[2].text).to.equal(`And there are many other things that they have traditionally observed,
 the purification of cups and jugs and kettles and beds.)
-So the Pharisees and scribes questioned him,
-"Why do your disciples not follow the tradition of the elders
-but instead eat a meal with unclean hands?"`);
+So the Pharisees and scribes questioned him,`);
 
-    expect(tweets[3].text).to.equal(`He responded,`);
+    expect(tweets[3].text).to.equal(`"Why do your disciples not follow the tradition of the elders
+but instead eat a meal with unclean hands?"
+He responded,`);
 
     expect(tweets[4].text).to.equal(`"Well did Isaiah prophesy about you hypocrites,
 as it is written:
 
 *This people honors me with their lips,
 but their hearts are far from me;
-In vain do they worship me,
-teaching as doctrines human precepts.*
+In vain do they worship me,`);
 
-You disregard God's commandment but cling to human tradition."`);
+    expect(tweets[5].text).to.equal(`teaching as doctrines human precepts.*
 
-    expect(tweets[5].text).to.equal(`He went on to say,
-"How well you have set aside the commandment of God
+You disregard God's commandment but cling to human tradition."
+He went on to say,`);
+
+    expect(tweets[6].text).to.equal(`"How well you have set aside the commandment of God
 in order to uphold your tradition!
 For Moses said,
 *Honor your father and your mother*,
@@ -367,7 +368,7 @@ and *Whoever curses father or mother shall die.*
 Yet you say,
 'If someone says to father or mother,`);
 
-    expect(tweets[6].text).to.equal(`"Any support you might have had from me is *qorban*"'
+    expect(tweets[7].text).to.equal(`"Any support you might have had from me is *qorban*"'
 (meaning, dedicated to God),
 you allow him to do nothing more for his father or mother.
 You nullify the word of God
